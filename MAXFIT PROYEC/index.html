@@ -1,0 +1,969 @@
+<!DOCTYPE html>
+<html lang="es" class="h-full bg-black scroll-smooth">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>MAXFIT - Cyberpunk Fitness & High-Tech Gym</title>
+
+  <!-- Tailwind CSS CDN -->
+  <script src="https://cdn.tailwindcss.com"></script>
+  <script>
+    tailwind.config = {
+      theme: {
+        extend: {
+          colors: {
+            brand: {
+              yellow: '#FFE600',
+              yellowHover: '#E6D000',
+              cyan: '#00F0FF',
+              cyanGlow: 'rgba(0, 240, 255, 0.35)',
+              darkBg: '#050608',
+              cardBg: 'rgba(18, 20, 28, 0.85)',
+              panelBg: '#111319',
+              border: '#222736',
+              borderNeon: 'rgba(255, 230, 0, 0.4)',
+              muted: '#8E96A5'
+            }
+          },
+          fontFamily: {
+            orbitron: ['Orbitron', 'sans-serif'],
+            inter: ['Inter', 'sans-serif']
+          },
+          boxShadow: {
+            neonYellow: '0 0 20px rgba(255, 230, 0, 0.35)',
+            neonCyan: '0 0 20px rgba(0, 240, 255, 0.35)',
+            glowCard: '0 8px 32px 0 rgba(0, 0, 0, 0.8)'
+          }
+        }
+      }
+    }
+  </script>
+
+  <!-- Google Fonts & FontAwesome Icons -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&family=Orbitron:wght@500;600;700;800;900&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+
+  <style>
+    body {
+      background-color: #050608;
+      color: #F3F4F6;
+      font-family: 'Inter', sans-serif;
+    }
+    .cyber-grid {
+      background-image: linear-gradient(to right, rgba(255, 230, 0, 0.03) 1px, transparent 1px),
+                        linear-gradient(to bottom, rgba(0, 240, 255, 0.03) 1px, transparent 1px);
+      background-size: 40px 40px;
+    }
+    .glass-card {
+      background: rgba(15, 17, 23, 0.85);
+      backdrop-filter: blur(16px);
+      border: 1px solid rgba(255, 255, 255, 0.08);
+    }
+    .glass-card:hover {
+      border-color: rgba(255, 230, 0, 0.3);
+    }
+    .glow-yellow {
+      box-shadow: 0 0 15px rgba(255, 230, 0, 0.25);
+    }
+    .glow-cyan {
+      box-shadow: 0 0 15px rgba(0, 240, 255, 0.25);
+    }
+    .nav-tab-active {
+      color: #FFE600;
+      border-bottom: 2px solid #FFE600;
+      background: rgba(255, 230, 0, 0.05);
+    }
+    ::-webkit-scrollbar {
+      width: 6px;
+    }
+    ::-webkit-scrollbar-track {
+      background: #050608;
+    }
+    ::-webkit-scrollbar-thumb {
+      background: #222736;
+      border-radius: 3px;
+    }
+    ::-webkit-scrollbar-thumb:hover {
+      background: #FFE600;
+    }
+  </style>
+</head>
+<body class="font-inter text-gray-100 min-h-screen flex flex-col justify-between relative bg-black cyber-grid selection:bg-brand-yellow selection:text-black">
+
+  <!-- Fondos dinámicos Cyberpunk -->
+  <div class="fixed inset-0 z-0 bg-cover bg-center bg-no-repeat opacity-20 filter contrast-125 pointer-events-none" 
+       style="background-image: url('https://images.unsplash.com/photo-1517838277536-f5f99be501cd?q=80&w=2070&auto=format&fit=crop');"></div>
+  <div class="fixed inset-0 z-0 bg-gradient-to-b from-black/90 via-black/95 to-black pointer-events-none"></div>
+
+  <!-- Header / Barra Superior con Navegación Principal -->
+  <header class="relative z-20 w-full border-b border-brand-border bg-black/80 backdrop-blur-xl sticky top-0 px-4 md:px-8 py-3 flex flex-col md:flex-row items-center justify-between gap-4">
+    <div class="flex items-center space-x-3 cursor-pointer" onclick="switchMainTab('evaluation')">
+      <div class="w-10 h-10 rounded-lg bg-gradient-to-br from-brand-yellow to-yellow-600 flex items-center justify-center text-black font-orbitron font-black text-xl shadow-neonYellow">
+        M
+      </div>
+      <div>
+        <span class="font-orbitron font-black text-2xl tracking-wider text-white flex items-center gap-1">
+          MAXFIT <span class="text-xs font-semibold px-2 py-0.5 rounded bg-brand-cyan/10 border border-brand-cyan/40 text-brand-cyan tracking-widest">CYBER-LAB</span>
+        </span>
+      </div>
+    </div>
+
+    <!-- Navegación por Pestañas Principales -->
+    <nav class="flex items-center space-x-1 md:space-x-2 bg-brand-panelBg/80 p-1 rounded-xl border border-brand-border">
+      <button id="mainTab-evaluation" onclick="switchMainTab('evaluation')" 
+              class="nav-tab-active px-3 md:px-5 py-2 rounded-lg font-orbitron font-bold text-xs md:text-sm tracking-wider transition-all flex items-center space-x-2">
+        <i class="fa-solid fa-microchip text-brand-yellow"></i>
+        <span>EVALUACIÓN & PLAN</span>
+      </button>
+
+      <button id="mainTab-exercises" onclick="switchMainTab('exercises')" 
+              class="px-3 md:px-5 py-2 rounded-lg font-orbitron font-bold text-xs md:text-sm text-gray-400 hover:text-white transition-all flex items-center space-x-2">
+        <i class="fa-solid fa-dumbbell text-brand-cyan"></i>
+        <span>GUÍA DE EJERCICIOS</span>
+      </button>
+
+      <button id="mainTab-facilities" onclick="switchMainTab('facilities')" 
+              class="px-3 md:px-5 py-2 rounded-lg font-orbitron font-bold text-xs md:text-sm text-gray-400 hover:text-white transition-all flex items-center space-x-2">
+        <i class="fa-solid fa-building-circle-check text-purple-400"></i>
+        <span>INSTALACIONES & TECH</span>
+      </button>
+    </nav>
+  </header>
+
+  <!-- Contenedor Principal -->
+  <main class="relative z-10 flex-grow p-4 md:p-8 max-w-7xl mx-auto w-full">
+
+    <!-- ================================================================= -->
+    <!-- PESTAÑA 1: EVALUACIÓN BIOMÉTRICA & DASHBOARD                      -->
+    <!-- ================================================================= -->
+    <div id="view-evaluation" class="space-y-8">
+
+      <!-- Sub-indicador de Pasos para Evaluación -->
+      <div id="stepIndicator" class="hidden md:flex items-center justify-center space-x-3 text-xs font-semibold uppercase tracking-widest text-brand-muted mb-4">
+        <span id="stepBadge1" class="px-3 py-1 rounded bg-brand-yellow text-black font-bold shadow-neonYellow">1. Inicio</span>
+        <i class="fa-solid fa-chevron-right text-[10px] text-brand-border"></i>
+        <span id="stepBadge2" class="px-3 py-1 rounded bg-brand-panelBg text-gray-400 border border-brand-border">2. Perfil</span>
+        <i class="fa-solid fa-chevron-right text-[10px] text-brand-border"></i>
+        <span id="stepBadge3" class="px-3 py-1 rounded bg-brand-panelBg text-gray-400 border border-brand-border">3. Métricas</span>
+        <i class="fa-solid fa-chevron-right text-[10px] text-brand-border"></i>
+        <span id="stepBadge4" class="px-3 py-1 rounded bg-brand-panelBg text-gray-400 border border-brand-border">4. Mi Dashboard</span>
+      </div>
+
+      <!-- PASO 1: PRESENTACIÓN FUTURISTA -->
+      <section id="step1" class="glass-card rounded-3xl p-8 md:p-14 text-center max-w-4xl mx-auto border border-brand-border shadow-glowCard relative overflow-hidden">
+        <div class="absolute -top-24 -right-24 w-72 h-72 bg-brand-yellow/10 rounded-full blur-3xl pointer-events-none"></div>
+        <div class="absolute -bottom-24 -left-24 w-72 h-72 bg-brand-cyan/10 rounded-full blur-3xl pointer-events-none"></div>
+
+        <div class="inline-flex items-center space-x-2 px-4 py-1.5 rounded-full bg-brand-yellow/10 border border-brand-yellow/30 text-brand-yellow text-xs font-bold uppercase tracking-widest mb-6">
+          <i class="fa-solid fa-bolt text-xs"></i>
+          <span>SISTEMA DE ENTRENAMIENTO IA V3.0</span>
+        </div>
+        <h1 class="font-orbitron font-black text-4xl sm:text-6xl text-white tracking-tight mb-6 leading-tight">
+          SISTEMA DE <span class="text-transparent bg-clip-text bg-gradient-to-r from-brand-yellow via-yellow-200 to-brand-cyan">ALTA PRECISIÓN</span> BIOMÉTRICA
+        </h1>
+        <p class="text-gray-300 text-base md:text-xl max-w-2xl mx-auto mb-10 font-normal leading-relaxed">
+          Calibra tu plan de nutrición y entrenamiento con sensores cibernéticos. Optimiza el gasto metabólico y haz seguimiento a tus metas día a día.
+        </p>
+        <button onclick="goToStep(2)" class="inline-flex items-center justify-center space-x-3 bg-brand-yellow hover:bg-brand-yellowHover text-black font-orbitron font-extrabold text-base md:text-lg px-8 py-4 rounded-xl transition-all transform hover:scale-105 shadow-neonYellow">
+          <span>COMENZAR EVALUACIÓN</span>
+          <i class="fa-solid fa-arrow-right"></i>
+        </button>
+      </section>
+
+      <!-- PASO 2: DATOS PERSONALES -->
+      <section id="step2" class="glass-card hidden rounded-3xl p-6 md:p-10 max-w-2xl mx-auto border border-brand-border shadow-glowCard">
+        <h2 class="font-orbitron font-bold text-2xl md:text-3xl text-white mb-2 flex items-center space-x-3">
+          <i class="fa-solid fa-user-gear text-brand-yellow"></i>
+          <span>Perfil Biométrico</span>
+        </h2>
+        <p class="text-gray-400 text-sm mb-8">Paso 1 de 2: Calibrando datos del atleta.</p>
+
+        <form id="formStep2" onsubmit="handleStep2(event)" class="space-y-6">
+          <div>
+            <label class="block text-xs font-bold uppercase tracking-wider text-gray-300 mb-2">Nombre Completo</label>
+            <input type="text" id="inputName" required placeholder="Ej. Carlos Mendoza" 
+                   class="w-full bg-brand-panelBg border border-brand-border rounded-xl px-4 py-3.5 text-brand-yellow font-bold placeholder-gray-600 focus:outline-none focus:border-brand-yellow focus:ring-1 focus:ring-brand-yellow transition-all">
+          </div>
+
+          <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+            <div>
+              <label class="block text-xs font-bold uppercase tracking-wider text-gray-300 mb-2">Edad</label>
+              <input type="number" id="inputAge" min="12" max="100" required placeholder="Ej. 25" oninput="calculateBirthYear()"
+                     class="w-full bg-brand-panelBg border border-brand-border rounded-xl px-4 py-3.5 text-brand-yellow font-bold placeholder-gray-600 focus:outline-none focus:border-brand-yellow focus:ring-1 focus:ring-brand-yellow transition-all">
+            </div>
+            <div>
+              <label class="block text-xs font-bold uppercase tracking-wider text-gray-300 mb-2">Año de Nacimiento (Estimado)</label>
+              <input type="number" id="inputBirthYear" readonly placeholder="Cálculo automático" 
+                     class="w-full bg-black/50 border border-brand-border/60 text-brand-yellow font-bold rounded-xl px-4 py-3.5 focus:outline-none cursor-not-allowed">
+            </div>
+          </div>
+
+          <div>
+            <label class="block text-xs font-bold uppercase tracking-wider text-gray-300 mb-2">Género Biológico</label>
+            <div class="grid grid-cols-2 gap-4">
+              <label class="cursor-pointer">
+                <input type="radio" name="gender" value="male" checked class="peer hidden">
+                <div class="border border-brand-border rounded-xl p-4 text-center peer-checked:border-brand-yellow peer-checked:bg-brand-yellow/10 transition-all">
+                  <i class="fa-solid fa-mars text-xl text-gray-400 peer-checked:text-brand-yellow mb-1 block"></i>
+                  <span class="text-sm font-semibold">Masculino</span>
+                </div>
+              </label>
+              <label class="cursor-pointer">
+                <input type="radio" name="gender" value="female" class="peer hidden">
+                <div class="border border-brand-border rounded-xl p-4 text-center peer-checked:border-brand-yellow peer-checked:bg-brand-yellow/10 transition-all">
+                  <i class="fa-solid fa-venus text-xl text-gray-400 peer-checked:text-brand-yellow mb-1 block"></i>
+                  <span class="text-sm font-semibold">Femenino</span>
+                </div>
+              </label>
+            </div>
+          </div>
+
+          <div class="flex justify-between items-center pt-4 border-t border-brand-border">
+            <button type="button" onclick="goToStep(1)" class="px-6 py-3 rounded-xl border border-brand-border text-gray-300 hover:bg-white/5 font-semibold transition-all">Atrás</button>
+            <button type="submit" class="bg-brand-yellow hover:bg-brand-yellowHover text-black font-orbitron font-bold px-8 py-3.5 rounded-xl transition-all shadow-neonYellow">Siguiente</button>
+          </div>
+        </form>
+      </section>
+
+      <!-- PASO 3: DATOS FÍSICOS Y PESO OBJETIVO -->
+      <section id="step3" class="glass-card hidden rounded-3xl p-6 md:p-10 max-w-3xl mx-auto border border-brand-border shadow-glowCard">
+        <h2 class="font-orbitron font-bold text-2xl md:text-3xl text-white mb-2 flex items-center space-x-3">
+          <i class="fa-solid fa-weight-scale text-brand-yellow"></i>
+          <span>Métricas Físicas y Meta</span>
+        </h2>
+        <p class="text-gray-400 text-sm mb-8">Paso 2 de 2: Definiendo parámetros de masa y objetivo.</p>
+
+        <form id="formStep3" onsubmit="handleStep3(event)" class="space-y-6">
+          <div class="grid grid-cols-1 sm:grid-cols-3 gap-6">
+            <div>
+              <label class="block text-xs font-bold uppercase tracking-wider text-gray-300 mb-2">Peso Actual (kg)</label>
+              <input type="number" id="inputWeight" step="0.1" min="30" max="250" required placeholder="Ej. 78.5"
+                     class="w-full bg-brand-panelBg border border-brand-border rounded-xl px-4 py-3.5 text-brand-yellow font-bold placeholder-gray-600 focus:outline-none focus:border-brand-yellow focus:ring-1 focus:ring-brand-yellow transition-all">
+            </div>
+            <div>
+              <label class="block text-xs font-bold uppercase tracking-wider text-gray-300 mb-2">Peso Objetivo (kg)</label>
+              <input type="number" id="inputTargetWeight" step="0.1" min="30" max="250" required placeholder="Ej. 72.0"
+                     class="w-full bg-brand-panelBg border border-brand-border rounded-xl px-4 py-3.5 text-brand-yellow font-bold placeholder-gray-600 focus:outline-none focus:border-brand-yellow focus:ring-1 focus:ring-brand-yellow transition-all">
+            </div>
+            <div>
+              <label class="block text-xs font-bold uppercase tracking-wider text-gray-300 mb-2">Estatura (cm)</label>
+              <input type="number" id="inputHeight" min="100" max="230" required placeholder="Ej. 175"
+                     class="w-full bg-brand-panelBg border border-brand-border rounded-xl px-4 py-3.5 text-brand-yellow font-bold placeholder-gray-600 focus:outline-none focus:border-brand-yellow focus:ring-1 focus:ring-brand-yellow transition-all">
+            </div>
+          </div>
+
+          <div>
+            <label class="block text-xs font-bold uppercase tracking-wider text-gray-300 mb-3">Objetivo Principal</label>
+            <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
+              <label class="cursor-pointer">
+                <input type="radio" name="goal" value="weight_loss" checked class="peer hidden">
+                <div class="border border-brand-border rounded-xl p-4 peer-checked:border-brand-yellow peer-checked:bg-brand-yellow/10 transition-all flex items-start space-x-3">
+                  <i class="fa-solid fa-fire-flame-curved text-xl text-brand-yellow mt-1"></i>
+                  <div>
+                    <h4 class="font-bold text-white text-sm">Bajar de Peso / Grasa</h4>
+                    <p class="text-xs text-gray-400 mt-1">Déficit calórico + alta quema metabólica.</p>
+                  </div>
+                </div>
+              </label>
+
+              <label class="cursor-pointer">
+                <input type="radio" name="goal" value="definition" class="peer hidden">
+                <div class="border border-brand-border rounded-xl p-4 peer-checked:border-brand-yellow peer-checked:bg-brand-yellow/10 transition-all flex items-start space-x-3">
+                  <i class="fa-solid fa-bolt text-xl text-brand-yellow mt-1"></i>
+                  <div>
+                    <h4 class="font-bold text-white text-sm">Definición Muscular</h4>
+                    <p class="text-xs text-gray-400 mt-1">Preserva masa magra y quema grasa residual.</p>
+                  </div>
+                </div>
+              </label>
+
+              <label class="cursor-pointer">
+                <input type="radio" name="goal" value="muscle_gain" class="peer hidden">
+                <div class="border border-brand-border rounded-xl p-4 peer-checked:border-brand-yellow peer-checked:bg-brand-yellow/10 transition-all flex items-start space-x-3">
+                  <i class="fa-solid fa-dumbbell text-xl text-brand-yellow mt-1"></i>
+                  <div>
+                    <h4 class="font-bold text-white text-sm">Aumento de Masa Muscular</h4>
+                    <p class="text-xs text-gray-400 mt-1">Hipertrofia estructurada y superávit proteico.</p>
+                  </div>
+                </div>
+              </label>
+
+              <label class="cursor-pointer">
+                <input type="radio" name="goal" value="performance" class="peer hidden">
+                <div class="border border-brand-border rounded-xl p-4 peer-checked:border-brand-yellow peer-checked:bg-brand-yellow/10 transition-all flex items-start space-x-3">
+                  <i class="fa-solid fa-heart-pulse text-xl text-brand-yellow mt-1"></i>
+                  <div>
+                    <h4 class="font-bold text-white text-sm">Rendimiento Atlético</h4>
+                    <p class="text-xs text-gray-400 mt-1">Potencia, VO2 Max y fuerza explosiva.</p>
+                  </div>
+                </div>
+              </label>
+            </div>
+          </div>
+
+          <div class="flex justify-between items-center pt-4 border-t border-brand-border">
+            <button type="button" onclick="goToStep(2)" class="px-6 py-3 rounded-xl border border-brand-border text-gray-300 hover:bg-white/5 font-semibold transition-all">Atrás</button>
+            <button type="submit" class="bg-brand-yellow hover:bg-brand-yellowHover text-black font-orbitron font-bold px-8 py-3.5 rounded-xl transition-all shadow-neonYellow">GENERAR DASHBOARD</button>
+          </div>
+        </form>
+      </section>
+
+      <!-- PASO 4: DASHBOARD CIBERNÉTICO COMPLETO -->
+      <section id="step4" class="step-card hidden space-y-8">
+        
+        <!-- Tarjeta Resumen Perfil -->
+        <div class="glass-card rounded-2xl p-6 md:p-8 border border-brand-border shadow-glowCard flex flex-col md:flex-row md:items-center justify-between gap-6">
+          <div>
+            <div class="flex items-center space-x-3 mb-2">
+              <span class="px-3 py-1 rounded bg-brand-yellow text-black font-orbitron font-black text-xs shadow-neonYellow">PERFIL ACTIVO</span>
+              <span id="displayGoalTag" class="text-xs font-semibold text-brand-cyan uppercase tracking-widest border border-brand-cyan/40 px-3 py-1 rounded-full bg-brand-cyan/10">--</span>
+            </div>
+            <h2 class="font-orbitron font-extrabold text-3xl text-white" id="displayName">--</h2>
+            <p class="text-gray-400 text-sm mt-1" id="displaySubInfo">-- años | -- cm</p>
+          </div>
+
+          <div class="grid grid-cols-2 sm:grid-cols-3 gap-4 border-t md:border-t-0 md:border-l border-brand-border pt-4 md:pt-0 md:pl-6">
+            <div>
+              <span class="text-xs text-gray-400 font-semibold block">Peso Actual</span>
+              <span class="font-orbitron font-bold text-2xl text-white" id="displayCurrentWeight">-- <span class="text-xs font-normal text-gray-400">kg</span></span>
+            </div>
+            <div>
+              <span class="text-xs text-gray-400 font-semibold block">Peso Objetivo</span>
+              <span class="font-orbitron font-bold text-2xl text-brand-yellow" id="displayTargetWeight">-- <span class="text-xs font-normal text-gray-400">kg</span></span>
+            </div>
+            <div class="col-span-2 sm:col-span-1">
+              <span class="text-xs text-gray-400 font-semibold block">Diferencia</span>
+              <span class="font-orbitron font-bold text-2xl text-white" id="displayWeightDiff">--</span>
+            </div>
+          </div>
+        </div>
+
+        <!-- Indicadores IMC y Calorías -->
+        <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+          <div class="glass-card rounded-2xl p-6 border border-brand-border shadow-xl">
+            <div class="flex items-center justify-between mb-4">
+              <h3 class="font-orbitron font-bold text-lg text-white flex items-center space-x-2">
+                <i class="fa-solid fa-chart-line text-brand-yellow"></i>
+                <span>Índice de Masa Corporal (IMC)</span>
+              </h3>
+              <span id="bmiStatusBadge" class="px-3 py-1 rounded text-xs font-bold uppercase">--</span>
+            </div>
+            <div class="flex items-baseline space-x-3 mb-4">
+              <span id="bmiValue" class="font-orbitron font-black text-4xl text-white">--</span>
+              <span class="text-xs text-gray-400">kg/m²</span>
+            </div>
+            <div class="w-full h-3 bg-brand-panelBg rounded-full overflow-hidden flex">
+              <div class="w-1/4 h-full bg-blue-500/70" title="Bajo peso"></div>
+              <div class="w-1/3 h-full bg-green-500/70" title="Normal"></div>
+              <div class="w-1/4 h-full bg-yellow-500/70" title="Sobrepeso"></div>
+              <div class="w-1/6 h-full bg-red-500/70" title="Obesidad"></div>
+            </div>
+          </div>
+
+          <div class="glass-card rounded-2xl p-6 border border-brand-border shadow-xl">
+            <h3 class="font-orbitron font-bold text-lg text-white mb-2 flex items-center space-x-2">
+              <i class="fa-solid fa-utensils text-brand-cyan"></i>
+              <span>Gasto Calórico Diario Sugerido</span>
+            </h3>
+            <p class="text-xs text-gray-400 mb-4">Ajustado automáticamente según tu meta de entrenamiento.</p>
+            <div class="flex items-baseline space-x-3">
+              <span id="caloriesValue" class="font-orbitron font-black text-4xl text-brand-cyan">--</span>
+              <span class="text-sm font-semibold text-gray-300">kcal / día</span>
+            </div>
+          </div>
+        </div>
+
+        <!-- REGISTRO DIARIO DE PROGRESO -->
+        <div class="glass-card rounded-2xl p-6 md:p-8 border border-brand-yellow/30 shadow-2xl">
+          <div class="flex items-center justify-between mb-6">
+            <div>
+              <h3 class="font-orbitron font-bold text-xl text-white flex items-center space-x-3">
+                <i class="fa-solid fa-pen-to-square text-brand-yellow"></i>
+                <span>Diario de Entrenamiento & Progreso</span>
+              </h3>
+              <p class="text-xs text-gray-400 mt-1">Registra tu pesaje de hoy, hidratación y cumplimiento de rutina.</p>
+            </div>
+            <span class="text-xs text-brand-yellow bg-brand-yellow/10 border border-brand-yellow/30 px-3 py-1 rounded-full font-bold">HOY</span>
+          </div>
+
+          <form id="formDailyLog" onsubmit="addDailyLog(event)" class="grid grid-cols-1 sm:grid-cols-3 gap-4 mb-8">
+            <div>
+              <label class="block text-xs font-bold uppercase text-gray-400 mb-1">Peso Hoy (kg)</label>
+              <input type="number" id="logWeight" step="0.1" required placeholder="Ej. 77.8" 
+                     class="w-full bg-brand-panelBg border border-brand-border rounded-xl px-4 py-2.5 text-brand-yellow font-bold focus:outline-none focus:border-brand-yellow">
+            </div>
+            <div>
+              <label class="block text-xs font-bold uppercase text-gray-400 mb-1">Agua Consumida (Vasos)</label>
+              <input type="number" id="logWater" min="0" max="20" required placeholder="Ej. 8" 
+                     class="w-full bg-brand-panelBg border border-brand-border rounded-xl px-4 py-2.5 text-brand-yellow font-bold focus:outline-none focus:border-brand-yellow">
+            </div>
+            <div>
+              <label class="block text-xs font-bold uppercase text-gray-400 mb-1">Estado de Rutina</label>
+              <select id="logStatus" class="w-full bg-brand-panelBg border border-brand-border rounded-xl px-4 py-2.5 text-white focus:outline-none focus:border-brand-yellow">
+                <option value="Completado 100%">Completado 100%</option>
+                <option value="Parcial (50%)">Parcial (50%)</option>
+                <option value="Descanso">Día de Descanso</option>
+              </select>
+            </div>
+            <div class="sm:col-span-3 flex justify-end">
+              <button type="submit" class="bg-brand-yellow hover:bg-brand-yellowHover text-black font-bold font-orbitron px-6 py-2.5 rounded-xl transition-all text-sm shadow-neonYellow">
+                Guardar Log Diario
+              </button>
+            </div>
+          </form>
+
+          <!-- Historial de Logs -->
+          <h4 class="font-bold text-xs text-gray-300 uppercase tracking-wider mb-4">Registros Guardados</h4>
+          <div class="overflow-x-auto">
+            <table class="w-full text-left text-sm text-gray-300">
+              <thead class="bg-brand-panelBg text-xs font-bold uppercase text-gray-400 border-b border-brand-border">
+                <tr>
+                  <th class="p-3">Fecha</th>
+                  <th class="p-3">Peso</th>
+                  <th class="p-3">Agua</th>
+                  <th class="p-3">Rutina</th>
+                </tr>
+              </thead>
+              <tbody id="logTableBody" class="divide-y divide-brand-border/40">
+                <!-- Inyección JavaScript -->
+              </tbody>
+            </table>
+          </div>
+        </div>
+
+        <!-- Rutina Personalizada & Dieta -->
+        <div class="grid grid-cols-1 lg:grid-cols-2 gap-8">
+          <div class="glass-card rounded-2xl p-6 border border-brand-border shadow-xl">
+            <h3 class="font-orbitron font-bold text-xl text-white mb-6 flex items-center space-x-3">
+              <i class="fa-solid fa-bolt text-brand-yellow"></i>
+              <span>Rutina Recomendada para Tu Meta</span>
+            </h3>
+            <div id="workoutList" class="space-y-4">
+              <!-- Inyección JS -->
+            </div>
+          </div>
+
+          <div class="glass-card rounded-2xl p-6 border border-brand-border shadow-xl">
+            <h3 class="font-orbitron font-bold text-xl text-white mb-6 flex items-center space-x-3">
+              <i class="fa-solid fa-apple-whole text-brand-cyan"></i>
+              <span>Distribución de Macronutrientes</span>
+            </h3>
+            <div id="macroDistribution" class="grid grid-cols-3 gap-3 text-center mb-6">
+              <!-- Inyección JS -->
+            </div>
+            <h4 class="font-bold text-sm text-gray-300 uppercase tracking-wider mb-4">Plan Nutricional Recomendado</h4>
+            <div id="dietList" class="space-y-3 text-sm text-gray-300">
+              <!-- Inyección JS -->
+            </div>
+          </div>
+        </div>
+
+        <div class="text-center pt-6">
+          <button onclick="goToStep(1)" class="px-8 py-3 rounded-xl border border-brand-border hover:bg-white/5 text-gray-300 font-semibold transition-all">
+            <i class="fa-solid fa-rotate-left mr-2"></i> Volver a Evaluar
+          </button>
+        </div>
+
+      </section>
+
+    </div>
+
+    <!-- ================================================================= -->
+    <!-- PESTAÑA 2: GUÍA DEDICADA DE EJERCICIOS (CATÁLOGO COMPLETO)         -->
+    <!-- ================================================================= -->
+    <div id="view-exercises" class="hidden space-y-8">
+      
+      <!-- Encabezado Pestaña Ejercicios -->
+      <div class="glass-card rounded-3xl p-6 md:p-8 border border-brand-border flex flex-col md:flex-row md:items-center justify-between gap-6">
+        <div>
+          <span class="px-3 py-1 rounded bg-brand-cyan/10 border border-brand-cyan/40 text-brand-cyan font-orbitron font-bold text-xs">CATÁLOGO TÁCTICO DE EJERCICIOS</span>
+          <h2 class="font-orbitron font-black text-3xl text-white mt-2">GUÍA VISUAL DE MOVIMIENTOS</h2>
+          <p class="text-gray-400 text-sm mt-1">Explora técnicas, ejecuciones y grupos musculares con imágenes de alta calidad.</p>
+        </div>
+
+        <!-- Filtro de Grupo Muscular -->
+        <div class="flex flex-wrap gap-2" id="exerciseFilters">
+          <button onclick="filterExercises('all')" class="ex-filter-btn px-4 py-2 rounded-xl text-xs font-orbitron font-bold border border-brand-yellow bg-brand-yellow text-black transition-all">Todos</button>
+          <button onclick="filterExercises('pecho')" class="ex-filter-btn px-4 py-2 rounded-xl text-xs font-orbitron font-bold border border-brand-border bg-brand-panelBg text-gray-300 hover:border-brand-cyan transition-all">Pecho</button>
+          <button onclick="filterExercises('espalda')" class="ex-filter-btn px-4 py-2 rounded-xl text-xs font-orbitron font-bold border border-brand-border bg-brand-panelBg text-gray-300 hover:border-brand-cyan transition-all">Espalda</button>
+          <button onclick="filterExercises('piernas')" class="ex-filter-btn px-4 py-2 rounded-xl text-xs font-orbitron font-bold border border-brand-border bg-brand-panelBg text-gray-300 hover:border-brand-cyan transition-all">Piernas</button>
+          <button onclick="filterExercises('hombros')" class="ex-filter-btn px-4 py-2 rounded-xl text-xs font-orbitron font-bold border border-brand-border bg-brand-panelBg text-gray-300 hover:border-brand-cyan transition-all">Hombros / Brazos</button>
+          <button onclick="filterExercises('cardio')" class="ex-filter-btn px-4 py-2 rounded-xl text-xs font-orbitron font-bold border border-brand-border bg-brand-panelBg text-gray-300 hover:border-brand-cyan transition-all">Cardio & HIIT</button>
+        </div>
+      </div>
+
+      <!-- Grilla de Tarjetas de Ejercicios -->
+      <div id="exerciseGrid" class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
+        <!-- Inyección JS de Ejercicios -->
+      </div>
+    </div>
+
+    <!-- ================================================================= -->
+    <!-- PESTAÑA 3: GALERÍA DE INSTALACIONES & EQUIPAMIENTO                -->
+    <!-- ================================================================= -->
+    <div id="view-facilities" class="hidden space-y-8">
+
+      <!-- Encabezado Pestaña Instalaciones -->
+      <div class="glass-card rounded-3xl p-6 md:p-8 border border-brand-border flex flex-col md:flex-row md:items-center justify-between gap-6">
+        <div>
+          <span class="px-3 py-1 rounded bg-purple-500/10 border border-purple-500/40 text-purple-400 font-orbitron font-bold text-xs">EQUIPAMIENTO DE VANGUARDIA</span>
+          <h2 class="font-orbitron font-black text-3xl text-white mt-2">INSTALACIONES CYBER-FITNESS</h2>
+          <p class="text-gray-400 text-sm mt-1">Gimnasio equipado con conectividad biométrica, zonas purificadas y tecnología de carga variable.</p>
+        </div>
+
+        <!-- Filtros de Zonas -->
+        <div class="flex flex-wrap gap-2" id="facilityFilters">
+          <button onclick="filterFacilities('all')" class="fac-filter-btn px-4 py-2 rounded-xl text-xs font-orbitron font-bold border border-brand-yellow bg-brand-yellow text-black transition-all">Todas las Zonas</button>
+          <button onclick="filterFacilities('fuerza')" class="fac-filter-btn px-4 py-2 rounded-xl text-xs font-orbitron font-bold border border-brand-border bg-brand-panelBg text-gray-300 hover:border-purple-400 transition-all">Fuerza & Pesas</button>
+          <button onclick="filterFacilities('cardio')" class="fac-filter-btn px-4 py-2 rounded-xl text-xs font-orbitron font-bold border border-brand-border bg-brand-panelBg text-gray-300 hover:border-purple-400 transition-all">Cardio Inteligente</button>
+          <button onclick="filterFacilities('hiit')" class="fac-filter-btn px-4 py-2 rounded-xl text-xs font-orbitron font-bold border border-brand-border bg-brand-panelBg text-gray-300 hover:border-purple-400 transition-all">Zona HIIT & Pliometría</button>
+          <button onclick="filterFacilities('recovery')" class="fac-filter-btn px-4 py-2 rounded-xl text-xs font-orbitron font-bold border border-brand-border bg-brand-panelBg text-gray-300 hover:border-purple-400 transition-all">Recovery & Spa</button>
+        </div>
+      </div>
+
+      <!-- Grilla de Tarjetas de Instalaciones -->
+      <div id="facilityGrid" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+        <!-- Inyección JS de Instalaciones -->
+      </div>
+    </div>
+
+  </main>
+
+  <!-- Footer -->
+  <footer class="relative z-10 border-t border-brand-border bg-black/90 py-6 text-center text-xs text-gray-500">
+    <div class="max-w-7xl mx-auto px-4 flex flex-col md:flex-row items-center justify-between gap-4">
+      <div class="flex items-center space-x-2">
+        <span class="font-orbitron font-bold text-brand-yellow">MAXFIT</span>
+        <span>— Plataforma de Rendimiento Biométrico</span>
+      </div>
+      <p>© 2026 MAXFIT Inc. Todos los derechos reservados.</p>
+    </div>
+  </footer>
+
+  <!-- Lógica JavaScript Principal -->
+  <script>
+    // Estado General
+    const state = {
+      name: '',
+      age: 25,
+      birthYear: 2001,
+      gender: 'male',
+      weight: 70,
+      targetWeight: 65,
+      height: 175,
+      goal: 'weight_loss',
+      logs: []
+    };
+
+    // Base de datos de Ejercicios
+    const exerciseDatabase = [
+      { id: 1, category: 'pecho', name: 'Press de Banca con Barra Oliva', level: 'Intermedio', reps: '4 x 8-10', desc: 'Desarrollo de pectoral mayor con control cinemático.', img: 'https://images.unsplash.com/photo-1534367507873-d2d7e24c797f?q=80&w=800&auto=format&fit=crop' },
+      { id: 2, category: 'pecho', name: 'Aperturas en Polea Alta', level: 'Principiante', reps: '3 x 12-15', desc: 'Aislamiento de la porción inferior y media del pecho.', img: 'https://images.unsplash.com/photo-1571019613454-1cb2f99b2d8b?q=80&w=800&auto=format&fit=crop' },
+      { id: 3, category: 'espalda', name: 'Dominadas Pronas Guiadas', level: 'Avanzado', reps: '4 x Fallo técnico', desc: 'Enfoque en dorsal ancho y densidad de la espalda.', img: 'https://images.unsplash.com/photo-1598971639058-fab3c3109a00?q=80&w=800&auto=format&fit=crop' },
+      { id: 4, category: 'espalda', name: 'Remo Horizontal con Barra', level: 'Intermedio', reps: '4 x 10', desc: 'Activación intensiva de romboides y trapecio medio.', img: 'https://images.unsplash.com/photo-1581009146145-b5ef050c2e1e?q=80&w=800&auto=format&fit=crop' },
+      { id: 5, category: 'piernas', name: 'Sentadilla Profunda Olímpica', level: 'Avanzado', reps: '4 x 8', desc: 'Máximo reclutamiento de cuadriceps y glúteos.', img: 'https://images.unsplash.com/photo-1574680096145-d05b474e2155?q=80&w=800&auto=format&fit=crop' },
+      { id: 6, category: 'piernas', name: 'Prensa Neumática de Piernas', level: 'Principiante', reps: '4 x 12', desc: 'Trabajo controlado de empuje de tren inferior.', img: 'https://images.unsplash.com/photo-1540497077202-7c8a3999166f?q=80&w=800&auto=format&fit=crop' },
+      { id: 7, category: 'hombros', name: 'Press Militar de Hombros', level: 'Intermedio', reps: '3 x 10', desc: 'Construcción de deltoides anterior y estabilidad del core.', img: 'https://images.unsplash.com/photo-1541534741688-6078c6bfb5c5?q=80&w=800&auto=format&fit=crop' },
+      { id: 8, category: 'hombros', name: 'Elevaciones Laterales con Mancuernas', level: 'Principiante', reps: '4 x 15', desc: 'Esculpido del deltoide lateral para amplitud superior.', img: 'https://images.unsplash.com/photo-1534438327276-14e5300c3a48?q=80&w=800&auto=format&fit=crop' },
+      { id: 9, category: 'cardio', name: 'Sprints HIIT en Cinta Conectada', level: 'Avanzado', reps: '15 min intervalos', desc: 'Aumento de VO2 Max e impacto metabólico sostenido.', img: 'https://images.unsplash.com/photo-1601422407692-ec4eeec1d9b3?q=80&w=800&auto=format&fit=crop' },
+      { id: 10, category: 'cardio', name: 'Remo Ergométrico Biométrico', level: 'Intermedio', reps: '20 min continuos', desc: 'Entrenamiento cardiovascular full-body de bajo impacto.', img: 'https://images.unsplash.com/photo-1517838277536-f5f99be501cd?q=80&w=800&auto=format&fit=crop' }
+    ];
+
+    // Base de datos de Instalaciones
+    const facilityDatabase = [
+      { id: 1, category: 'fuerza', name: 'Zona de Fuerza Libre & Barras Olímpicas', desc: 'Piso con absorción de impacto, discos calibrados y sensores de velocidad de barra.', img: 'https://images.unsplash.com/photo-1534438327276-14e5300c3a48?q=80&w=800&auto=format&fit=crop' },
+      { id: 2, category: 'fuerza', name: 'Maquinaria de Carga Selectiva Neumática', desc: 'Ajuste digital de peso mediante aire comprimido sin placas ruidosas.', img: 'https://images.unsplash.com/photo-1540497077202-7c8a3999166f?q=80&w=800&auto=format&fit=crop' },
+      { id: 3, category: 'cardio', name: 'Estación Cardio Cyber-Console', desc: 'Cintas, elípticas y escaladoras con pantalla UHD, ritmo cardíaco por infrarrojos y rutas virtuales.', img: 'https://images.unsplash.com/photo-1576678927484-cc9099a50801?q=80&w=800&auto=format&fit=crop' },
+      { id: 4, category: 'hiit', name: 'Arena Funcional & Pliometría', desc: 'Espacio adaptado para entrenamiento de alta intensidad con césped sintético y trineos.', img: 'https://images.unsplash.com/photo-1571902943202-507ec2618e8f?q=80&w=800&auto=format&fit=crop' },
+      { id: 5, category: 'recovery', name: 'Cámara Cryo & Recuperación Muscular', desc: 'Crioterapia de cuerpo entero para acelerar la reparación muscular post-entrenamiento.', img: 'https://images.unsplash.com/photo-1518611012118-696072aa579a?q=80&w=800&auto=format&fit=crop' },
+      { id: 6, category: 'recovery', name: 'Sauna Infrarrojo & Hidromasaje', desc: 'Desintoxicación profunda y relajación miofascial con luz LED cromoterapéutica.', img: 'https://images.unsplash.com/photo-1544161515-4ab6ce6db874?q=80&w=800&auto=format&fit=crop' }
+    ];
+
+    // Cambiar Navegación Principal (Pestañas)
+    function switchMainTab(tabName) {
+      window.scrollTo({ top: 0, behavior: 'smooth' });
+
+      const views = ['evaluation', 'exercises', 'facilities'];
+      views.forEach(view => {
+        const viewEl = document.getElementById(`view-${view}`);
+        const tabBtn = document.getElementById(`mainTab-${view}`);
+        
+        if (view === tabName) {
+          viewEl.classList.remove('hidden');
+          tabBtn.className = 'nav-tab-active px-3 md:px-5 py-2 rounded-lg font-orbitron font-bold text-xs md:text-sm transition-all flex items-center space-x-2';
+        } else {
+          viewEl.classList.add('hidden');
+          tabBtn.className = 'px-3 md:px-5 py-2 rounded-lg font-orbitron font-bold text-xs md:text-sm text-gray-400 hover:text-white transition-all flex items-center space-x-2';
+        }
+      });
+
+      if (tabName === 'exercises') {
+        renderExercises('all');
+      } else if (tabName === 'facilities') {
+        renderFacilities('all');
+      }
+    }
+
+    // Cambiar Pasos en la Evaluación Biométrica
+    function goToStep(stepNumber) {
+      window.scrollTo({ top: 0, behavior: 'smooth' });
+
+      for (let i = 1; i <= 4; i++) {
+        const card = document.getElementById(`step${i}`);
+        const badge = document.getElementById(`stepBadge${i}`);
+        
+        if (card) {
+          if (i === stepNumber) {
+            card.classList.remove('hidden');
+          } else {
+            card.classList.add('hidden');
+          }
+        }
+
+        if (badge) {
+          if (i === stepNumber) {
+            badge.className = 'px-3 py-1 rounded bg-brand-yellow text-black font-bold shadow-neonYellow';
+          } else {
+            badge.className = 'px-3 py-1 rounded bg-brand-panelBg text-gray-400 border border-brand-border';
+          }
+        }
+      }
+
+      const indicator = document.getElementById('stepIndicator');
+      if (indicator) {
+        if (stepNumber === 1) {
+          indicator.classList.add('hidden');
+        } else {
+          indicator.classList.remove('hidden');
+          indicator.classList.add('md:flex');
+        }
+      }
+    }
+
+    // Cálculo del año de nacimiento
+    function calculateBirthYear() {
+      const ageInput = document.getElementById('inputAge');
+      const birthYearInput = document.getElementById('inputBirthYear');
+      const age = parseInt(ageInput.value, 10);
+      const currentYear = new Date().getFullYear();
+
+      if (age && age > 0 && age < 120) {
+        birthYearInput.value = currentYear - age;
+      } else {
+        birthYearInput.value = '';
+      }
+    }
+
+    // Manejo de Formulario Paso 2
+    function handleStep2(e) {
+      if (e) e.preventDefault();
+      
+      const nameVal = document.getElementById('inputName').value;
+      const ageVal = parseInt(document.getElementById('inputAge').value, 10);
+      const birthYearVal = parseInt(document.getElementById('inputBirthYear').value, 10);
+
+      state.name = nameVal || 'Atleta MAXFIT';
+      state.age = ageVal || 25;
+      state.birthYear = birthYearVal || (new Date().getFullYear() - state.age);
+      
+      const genderRadios = document.getElementsByName('gender');
+      for (let radio of genderRadios) {
+        if (radio.checked) {
+          state.gender = radio.value;
+          break;
+        }
+      }
+
+      goToStep(3);
+    }
+
+    // Manejo de Formulario Paso 3 (Generación de Dashboard)
+    function handleStep3(e) {
+      if (e) e.preventDefault();
+
+      const weightInput = parseFloat(document.getElementById('inputWeight').value);
+      const targetWeightInput = parseFloat(document.getElementById('inputTargetWeight').value);
+      const heightInput = parseFloat(document.getElementById('inputHeight').value);
+
+      state.weight = isNaN(weightInput) ? 75 : weightInput;
+      state.targetWeight = isNaN(targetWeightInput) ? 70 : targetWeightInput;
+      state.height = isNaN(heightInput) ? 175 : heightInput;
+
+      const goalRadios = document.getElementsByName('goal');
+      for (let radio of goalRadios) {
+        if (radio.checked) {
+          state.goal = radio.value;
+          break;
+        }
+      }
+
+      renderDashboard();
+      goToStep(4);
+    }
+
+    // Renderizado completo del Dashboard
+    function renderDashboard() {
+      document.getElementById('displayName').innerText = state.name;
+      document.getElementById('displaySubInfo').innerText = `${state.age} años | ${state.height} cm | ${state.gender === 'male' ? 'Masculino' : 'Femenino'}`;
+      
+      document.getElementById('displayCurrentWeight').innerHTML = `${state.weight} <span class="text-xs font-normal text-gray-400">kg</span>`;
+      document.getElementById('displayTargetWeight').innerHTML = `${state.targetWeight} <span class="text-xs font-normal text-gray-400">kg</span>`;
+
+      const diff = (state.weight - state.targetWeight).toFixed(1);
+      const diffElement = document.getElementById('displayWeightDiff');
+      if (diff > 0) {
+        diffElement.innerText = `-${diff} kg`;
+        diffElement.className = 'font-orbitron font-bold text-2xl text-green-400';
+      } else if (diff < 0) {
+        diffElement.innerText = `+${Math.abs(diff)} kg`;
+        diffElement.className = 'font-orbitron font-bold text-2xl text-brand-cyan';
+      } else {
+        diffElement.innerText = 'Meta Alcanzada';
+        diffElement.className = 'font-orbitron font-bold text-xl text-brand-yellow';
+      }
+
+      const goalNames = {
+        'weight_loss': 'Bajar de Peso',
+        'definition': 'Definición Muscular',
+        'muscle_gain': 'Masa Muscular',
+        'performance': 'Rendimiento'
+      };
+      document.getElementById('displayGoalTag').innerText = goalNames[state.goal] || 'Personalizado';
+
+      const heightInMeters = state.height / 100;
+      const bmi = (state.weight / (heightInMeters * heightInMeters)).toFixed(1);
+      document.getElementById('bmiValue').innerText = bmi;
+
+      const bmiBadge = document.getElementById('bmiStatusBadge');
+      if (bmi < 18.5) {
+        bmiBadge.innerText = 'Bajo Peso';
+        bmiBadge.className = 'px-3 py-1 rounded text-xs font-bold uppercase bg-blue-500/20 text-blue-400 border border-blue-500/40';
+      } else if (bmi < 25) {
+        bmiBadge.innerText = 'Peso Saludable';
+        bmiBadge.className = 'px-3 py-1 rounded text-xs font-bold uppercase bg-green-500/20 text-green-400 border border-green-500/40';
+      } else if (bmi < 30) {
+        bmiBadge.innerText = 'Sobrepeso';
+        bmiBadge.className = 'px-3 py-1 rounded text-xs font-bold uppercase bg-yellow-500/20 text-yellow-400 border border-yellow-500/40';
+      } else {
+        bmiBadge.innerText = 'Obesidad';
+        bmiBadge.className = 'px-3 py-1 rounded text-xs font-bold uppercase bg-red-500/20 text-red-400 border border-red-500/40';
+      }
+
+      let bmr = (state.gender === 'male')
+        ? 88.36 + (13.4 * state.weight) + (4.8 * state.height) - (5.7 * state.age)
+        : 447.59 + (9.2 * state.weight) + (3.1 * state.height) - (4.3 * state.age);
+
+      let calories = Math.round(bmr * 1.4);
+      if (state.goal === 'weight_loss') calories -= 400;
+      if (state.goal === 'muscle_gain') calories += 400;
+
+      document.getElementById('caloriesValue').innerText = calories;
+
+      renderWorkoutAndDiet();
+    }
+
+    // Renderizar lista de ejercicios recomendados y dieta
+    function renderWorkoutAndDiet() {
+      const workoutContainer = document.getElementById('workoutList');
+      const macroContainer = document.getElementById('macroDistribution');
+      const dietContainer = document.getElementById('dietList');
+
+      const routines = {
+        'weight_loss': [
+          { name: 'Sprints HIIT en Cinta Conectada', detail: '15 min intervalos quemagrasa', img: 'https://images.unsplash.com/photo-1601422407692-ec4eeec1d9b3?q=80&w=400&auto=format&fit=crop' },
+          { name: 'Sentadilla Profunda Olímpica', detail: '4 Series x 12 Repeticiones', img: 'https://images.unsplash.com/photo-1574680096145-d05b474e2155?q=80&w=400&auto=format&fit=crop' },
+          { name: 'Remo Horizontal con Barra', detail: '3 Series x 15 Repeticiones', img: 'https://images.unsplash.com/photo-1581009146145-b5ef050c2e1e?q=80&w=400&auto=format&fit=crop' }
+        ],
+        'definition': [
+          { name: 'Press de Banca con Barra Oliva', detail: '4 Series x 10 Repeticiones', img: 'https://images.unsplash.com/photo-1534367507873-d2d7e24c797f?q=80&w=400&auto=format&fit=crop' },
+          { name: 'Prensa Neumática de Piernas', detail: '4 Series x 12 Repeticiones', img: 'https://images.unsplash.com/photo-1540497077202-7c8a3999166f?q=80&w=400&auto=format&fit=crop' },
+          { name: 'Elevaciones Laterales con Mancuernas', detail: '4 Series x 15 Repeticiones', img: 'https://images.unsplash.com/photo-1534438327276-14e5300c3a48?q=80&w=400&auto=format&fit=crop' }
+        ],
+        'muscle_gain': [
+          { name: 'Press Militar de Hombros', detail: '4 Series x 8 Repeticiones pesadas', img: 'https://images.unsplash.com/photo-1541534741688-6078c6bfb5c5?q=80&w=400&auto=format&fit=crop' },
+          { name: 'Dominadas Pronas Guiadas', detail: '4 Series al fallo técnico', img: 'https://images.unsplash.com/photo-1598971639058-fab3c3109a00?q=80&w=400&auto=format&fit=crop' },
+          { name: 'Sentadilla Profunda Olímpica', detail: '4 Series x 8 Repeticiones', img: 'https://images.unsplash.com/photo-1574680096145-d05b474e2155?q=80&w=400&auto=format&fit=crop' }
+        ],
+        'performance': [
+          { name: 'Sprints HIIT en Cinta Conectada', detail: '6 Series de alta velocidad', img: 'https://images.unsplash.com/photo-1601422407692-ec4eeec1d9b3?q=80&w=400&auto=format&fit=crop' },
+          { name: 'Remo Ergométrico Biométrico', detail: '20 min explosivos', img: 'https://images.unsplash.com/photo-1517838277536-f5f99be501cd?q=80&w=400&auto=format&fit=crop' },
+          { name: 'Dominadas Pronas Guiadas', detail: '3 Series continuas', img: 'https://images.unsplash.com/photo-1598971639058-fab3c3109a00?q=80&w=400&auto=format&fit=crop' }
+        ]
+      };
+
+      const macros = {
+        'weight_loss': { p: '40%', c: '30%', f: '30%' },
+        'definition': { p: '45%', c: '35%', f: '20%' },
+        'muscle_gain': { p: '30%', c: '50%', f: '20%' },
+        'performance': { p: '30%', c: '55%', f: '15%' }
+      };
+
+      const currentRoutine = routines[state.goal] || routines['weight_loss'];
+      const currentMacro = macros[state.goal] || macros['weight_loss'];
+
+      workoutContainer.innerHTML = currentRoutine.map(item => `
+        <div class="bg-brand-panelBg p-3 rounded-xl border border-brand-border flex items-center space-x-4">
+          <img src="${item.img}" alt="${item.name}" class="w-16 h-16 rounded-lg object-cover flex-shrink-0 border border-brand-border">
+          <div class="flex-grow">
+            <h4 class="font-bold text-white text-sm">${item.name}</h4>
+            <p class="text-xs text-brand-muted mt-0.5">${item.detail}</p>
+          </div>
+          <i class="fa-solid fa-circle-check text-brand-yellow text-lg"></i>
+        </div>
+      `).join('');
+
+      macroContainer.innerHTML = `
+        <div class="bg-brand-panelBg p-3 rounded-xl border border-brand-border">
+          <span class="text-xs text-gray-400 block font-semibold">Proteínas</span>
+          <span class="font-orbitron font-bold text-lg text-brand-yellow">${currentMacro.p}</span>
+        </div>
+        <div class="bg-brand-panelBg p-3 rounded-xl border border-brand-border">
+          <span class="text-xs text-gray-400 block font-semibold">Carbos</span>
+          <span class="font-orbitron font-bold text-lg text-white">${currentMacro.c}</span>
+        </div>
+        <div class="bg-brand-panelBg p-3 rounded-xl border border-brand-border">
+          <span class="text-xs text-gray-400 block font-semibold">Grasas</span>
+          <span class="font-orbitron font-bold text-lg text-white">${currentMacro.f}</span>
+        </div>
+      `;
+
+      dietContainer.innerHTML = `
+        <div class="p-3 bg-brand-panelBg/60 rounded-lg border border-brand-border/60">
+          <strong class="text-brand-yellow">Desayuno:</strong> Omelette con claras y pavo, avena con frutos rojos y té verde.
+        </div>
+        <div class="p-3 bg-brand-panelBg/60 rounded-lg border border-brand-border/60">
+          <strong class="text-brand-yellow">Almuerzo:</strong> Pechuga de pollo o salmón a la parrilla, camote al horno y vegetales.
+        </div>
+        <div class="p-3 bg-brand-panelBg/60 rounded-lg border border-brand-border/60">
+          <strong class="text-brand-yellow">Cena:</strong> Pescado blanco o tofu, ensalada verde completa y batido de proteína.
+        </div>
+      `;
+    }
+
+    // Agregar entrada al diario diario
+    function addDailyLog(e) {
+      if (e) e.preventDefault();
+      const weight = document.getElementById('logWeight').value;
+      const water = document.getElementById('logWater').value;
+      const status = document.getElementById('logStatus').value;
+
+      const today = new Date().toLocaleDateString('es-ES', { day: '2-digit', month: '2-digit' });
+
+      state.logs.unshift({ date: today, weight, water, status });
+
+      renderLogTable();
+      document.getElementById('formDailyLog').reset();
+    }
+
+    // Renderizar tabla de logs
+    function renderLogTable() {
+      const tbody = document.getElementById('logTableBody');
+      if (!tbody) return;
+
+      if (state.logs.length === 0) {
+        tbody.innerHTML = `<tr><td colspan="4" class="p-4 text-center text-gray-500 text-xs">Sin registros aún el día de hoy.</td></tr>`;
+        return;
+      }
+
+      tbody.innerHTML = state.logs.map(log => `
+        <tr class="hover:bg-brand-panelBg/40">
+          <td class="p-3 font-semibold text-white">${log.date}</td>
+          <td class="p-3 text-brand-yellow font-bold">${log.weight} kg</td>
+          <td class="p-3">${log.water} vasos</td>
+          <td class="p-3"><span class="px-2 py-0.5 text-xs rounded bg-brand-yellow/10 text-brand-yellow border border-brand-yellow/30">${log.status}</span></td>
+        </tr>
+      `).join('');
+    }
+
+    // Filtrar y Renderizar Catálogo de Ejercicios
+    function filterExercises(category) {
+      // Actualizar estilo botones filtro
+      const buttons = document.querySelectorAll('#exerciseFilters .ex-filter-btn');
+      buttons.forEach(btn => {
+        btn.className = 'ex-filter-btn px-4 py-2 rounded-xl text-xs font-orbitron font-bold border border-brand-border bg-brand-panelBg text-gray-300 hover:border-brand-cyan transition-all';
+      });
+
+      if (event && event.target) {
+        event.target.className = 'ex-filter-btn px-4 py-2 rounded-xl text-xs font-orbitron font-bold border border-brand-yellow bg-brand-yellow text-black transition-all';
+      }
+
+      renderExercises(category);
+    }
+
+    function renderExercises(category) {
+      const grid = document.getElementById('exerciseGrid');
+      const items = (category === 'all') 
+        ? exerciseDatabase 
+        : exerciseDatabase.filter(ex => ex.category === category);
+
+      grid.innerHTML = items.map(ex => `
+        <div class="glass-card rounded-2xl overflow-hidden border border-brand-border group hover:border-brand-cyan/60 transition-all duration-300 flex flex-col">
+          <div class="relative h-48 overflow-hidden bg-brand-panelBg">
+            <img src="${ex.img}" alt="${ex.name}" class="w-full h-full object-cover group-hover:scale-110 transition-transform duration-500">
+            <span class="absolute top-3 left-3 bg-black/80 backdrop-blur-md text-brand-cyan border border-brand-cyan/40 px-3 py-1 rounded-full text-[10px] font-orbitron font-bold uppercase">
+              ${ex.category}
+            </span>
+            <span class="absolute top-3 right-3 bg-brand-yellow/90 text-black px-2.5 py-0.5 rounded text-[10px] font-bold">
+              ${ex.level}
+            </span>
+          </div>
+          <div class="p-5 flex-grow flex flex-col justify-between">
+            <div>
+              <h3 class="font-orbitron font-bold text-white text-base mb-2 group-hover:text-brand-cyan transition-colors">${ex.name}</h3>
+              <p class="text-xs text-gray-400 mb-4 leading-relaxed">${ex.desc}</p>
+            </div>
+            <div class="pt-3 border-t border-brand-border flex items-center justify-between text-xs text-gray-300 font-semibold">
+              <span class="text-brand-yellow"><i class="fa-solid fa-repeat mr-1"></i> ${ex.reps}</span>
+              <span class="text-gray-500 text-[10px] uppercase">Técnica Guiada</span>
+            </div>
+          </div>
+        </div>
+      `).join('');
+    }
+
+    // Filtrar y Renderizar Galería de Instalaciones
+    function filterFacilities(category) {
+      const buttons = document.querySelectorAll('#facilityFilters .fac-filter-btn');
+      buttons.forEach(btn => {
+        btn.className = 'fac-filter-btn px-4 py-2 rounded-xl text-xs font-orbitron font-bold border border-brand-border bg-brand-panelBg text-gray-300 hover:border-purple-400 transition-all';
+      });
+
+      if (event && event.target) {
+        event.target.className = 'fac-filter-btn px-4 py-2 rounded-xl text-xs font-orbitron font-bold border border-brand-yellow bg-brand-yellow text-black transition-all';
+      }
+
+      renderFacilities(category);
+    }
+
+    function renderFacilities(category) {
+      const grid = document.getElementById('facilityGrid');
+      const items = (category === 'all') 
+        ? facilityDatabase 
+        : facilityDatabase.filter(fac => fac.category === category);
+
+      grid.innerHTML = items.map(fac => `
+        <div class="glass-card rounded-2xl overflow-hidden border border-brand-border group hover:border-purple-500/60 transition-all duration-300">
+          <div class="relative h-52 overflow-hidden bg-brand-panelBg">
+            <img src="${fac.img}" alt="${fac.name}" class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500">
+            <div class="absolute inset-0 bg-gradient-to-t from-black via-transparent to-transparent opacity-80"></div>
+            <span class="absolute bottom-3 left-3 bg-purple-500/20 text-purple-300 border border-purple-500/40 px-3 py-1 rounded-full text-[10px] font-orbitron font-bold uppercase backdrop-blur-md">
+              ZONA ${fac.category.toUpperCase()}
+            </span>
+          </div>
+          <div class="p-5">
+            <h3 class="font-orbitron font-bold text-white text-lg mb-2 group-hover:text-purple-300 transition-colors">${fac.name}</h3>
+            <p class="text-xs text-gray-400 leading-relaxed">${fac.desc}</p>
+          </div>
+        </div>
+      `).join('');
+    }
+
+    // Inicialización al cargar la página
+    document.addEventListener('DOMContentLoaded', () => {
+      renderLogTable();
+    });
+  </script>
+</body>
+</html>
